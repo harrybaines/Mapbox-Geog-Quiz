@@ -7,6 +7,8 @@
         <script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
         <script src="jquery.csv.min.js"></script>
 
+        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
         <style type="text/css">
             h1 {
                 font-size: 200%;
@@ -77,9 +79,9 @@
         <div id="input-container">
             <input id="country-input" type="text" name="country">
             <div id="control-container">
-                <input class="control-btn" id="start-btn" type="button" value="Start!" onclick="this.style.display='none';getRandCountry();">
-                <input class="control-btn" id="confirm-btn" type="button" value="Confirm" onclick="getRandCountry();">
-                <input class="control-btn" id="skip-btn" type="button" value="Skip" onclick="getRandCountry();">
+                <input class="control-btn" id="start-btn" type="button" value="Start!" onclick="this.style.visibility='hidden';startGame();">
+                <input class="control-btn" id="confirm-btn" type="button" value="Confirm" onclick="checkAnswer();">
+                <input class="control-btn" id="skip-btn" type="button" value="Skip" onclick="skipCountry();">
                 <input class="control-btn" id="finish-btn" type="button" value="Finish" onclick="finishGame();">
             </div>
         </div>
@@ -88,20 +90,16 @@
         <script>
 
             mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
-            
-            var countries = ["Bulgaria", "France", "United%20Kingdom", "Spain", "Germany"];            
-            var prevInd = -1;
+            var el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundImage = 'url(marker.png)';
+            el.style.width = 30 + 'px';
+            el.style.height = 30 + 'px';
 
-            function getRandCountry() {
-                var ind = prevInd;
-                while (ind == prevInd) {
-                    ind = Math.floor(Math.random() * countries.length);
-                }
-                var randCountry = countries[ind];
-                flyToCountry(randCountry);
-                prevInd = ind;
-            }
-
+            var inputBox = document.getElementById("country-input");
+            var countries = ["Bulgaria", "France", "United Kingdom", "Spain", "Germany"];     
+            var randCountry;       
+            var correct = skipped = prevInd = 0;
 
             var map = new mapboxgl.Map({
                 container: 'map',
@@ -109,20 +107,65 @@
                 zoom: 3
             });
 
+            function startGame() {
+                 correct, skipped = 0;
+                 inputBox.focus();
+                 getRandCountry();
+            }
+
+            function getRandCountry() {
+                var ind = prevInd;
+                while (ind == prevInd) {
+                    ind = Math.floor(Math.random() * countries.length);
+                }
+                randCountry = countries[ind];
+                flyToCountry(randCountry);
+                prevInd = ind;
+            }
+
+            function checkAnswer() {
+                var entry = inputBox.value.toLowerCase();
+
+                if (entry == randCountry.toLowerCase()) {
+                    console.log("Correct!" + " (" + correct + ") correct");
+                    correct++;
+                }
+                else {
+                    console.log("Incorrect, the answer was: " + randCountry);
+                }
+
+                inputBox.value = "";
+                inputBox.focus();
+                getRandCountry();
+            }
+
+            function skipCountry() {
+                skipped++;
+                getRandCountry();
+            }
 
             function flyToCountry(country) {
 
                 var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + country + ".json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ&country=&types=country";
                 $.getJSON(url, function(data) {
+                    var coords = data.features[0].geometry.coordinates;
                     map.flyTo({
-                        center: data.features[0].geometry.coordinates
+                        center: coords
                     });
+                    new mapboxgl.Marker(el).setLngLat(coords).addTo(map);
                 });
             }
 
             function finishGame() {
-                console.log("Finish!");
+                console.log("You got " + correct + " correct and skipped " + skipped + " times");
+                document.getElementById("start-btn").style.visibility = "visible";
             }
+
+            $(document).keypress(function(e){
+                if (e.which == 13){
+                    $("#confirm-btn").click();
+                }
+            });
 
         </script>
 
