@@ -1,44 +1,136 @@
 <!DOCTYPE html>
 
-	<head>
-		<title>Geo Quiz</title>
-		<script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
-		<link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
-		<script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
-		<script src="jquery.csv.min.js"></script>
+    <head>
+        <title>Geo Quiz</title>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+        <script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
+        <script src="jquery.csv.min.js"></script>
 
-	</head>
+        <style type="text/css">
+            h1 {
+                font-size: 200%;
+                text-align: center;
+                color: green;
+                font-family: "Verdana";
+                margin-bottom: 30px;
+            }
+            #map-container {
+                text-align:center;
+                margin: 0 auto;
+                padding: 50px;
+                background-color: white;
+                width: 900px;
+                height: 350px;
+                box-shadow: 0 0 25px rgba(0,0,0,0.6);
+            }
+            #map {
+                margin: 0 auto;
+            }
+            #input-container {
+                text-align: center;
+                padding: 25px;
+                box-shadow: 0 0 25px rgba(0,0,0,0.6);
+                height: 175px;
+                width: 500px;
+                margin: 40px auto;
+            }
+            #control-container {
+                margin-top: 25px;
+            }
+            .control-btn {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 25px 32px;
+                text-align: center;
+                text-decoration: none;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            #question-text {
+                font-size: 125%;
+                font-family: "Verdana";
+                margin: -10px 0 25px 0;
+            }
+            img {
+                border: 1px solid black;
+            }
+            #country-input {
+                width:500px;
+                height: 40px;
+                text-align: center;
+                font-size: 200%;
+            }
+        </style>
 
-	<body>
+    </head>
 
-		<div id='map' style='width: 1000px; height: 600px;'></div>
+    <body>
 
-		<script>
-
-			mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
-
-			var map = new mapboxgl.Map({
-				container: 'map',
-				style: 'mapbox://styles/harryb0905/cjcs2esfh6ola2rnpaavxp4ld',
-				zoom: 3
-			});
+        <h1> Geography Quiz </h1>
 
 
-			var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/France.json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ";
+          
+        <div id='map' style='width: 1100px; height: 450px;'></div>
 
-			$.getJSON(url, function(data) {
-			    console.log(data);
-			});
-
-			console.log(url);
-
-		</script>
-
-	</body>
-
-	<script>
+        <div id="input-container">
+            <input id="country-input" type="text" name="country">
+            <div id="control-container">
+                <input class="control-btn" id="start-btn" type="button" value="Start!" onclick="this.style.display='none';getRandCountry();">
+                <input class="control-btn" id="confirm-btn" type="button" value="Confirm" onclick="getRandCountry();">
+                <input class="control-btn" id="skip-btn" type="button" value="Skip" onclick="getRandCountry();">
+                <input class="control-btn" id="finish-btn" type="button" value="Finish" onclick="finishGame();">
+            </div>
+        </div>
 
 
-	</script>
+        <script>
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
+            
+            var countries = ["Bulgaria", "France", "United%20Kingdom", "Spain", "Germany"];            
+            var prevInd = -1;
+
+            function getRandCountry() {
+                var ind = prevInd;
+                while (ind == prevInd) {
+                    ind = Math.floor(Math.random() * countries.length);
+                }
+                var randCountry = countries[ind];
+                flyToCountry(randCountry);
+                prevInd = ind;
+            }
+
+
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/harryb0905/cjcs2esfh6ola2rnpaavxp4ld',
+                zoom: 3
+            });
+
+
+            function flyToCountry(country) {
+
+                var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + country + ".json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ&country=&types=country";
+                $.getJSON(url, function(data) {
+                    map.flyTo({
+                        center: data.features[0].geometry.coordinates
+                    });
+                });
+            }
+
+            function finishGame() {
+                console.log("Finish!");
+            }
+
+        </script>
+
+    </body>
+
+    <script>
+
+
+    </script>
 
 </html>
