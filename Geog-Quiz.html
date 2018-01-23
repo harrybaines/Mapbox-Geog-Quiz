@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+	<head>
+		<title>Geo Quiz</title>
+		<script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
+		<link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+		<script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
+		<script src="jquery.csv.min.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id='map' style='width: 1000px; height: 600px;'></div>
+
+		<script>
+
+			mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
+
+			var map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/harryb0905/cjcs2esfh6ola2rnpaavxp4ld',
+				zoom: 3
+			});
+
+
+			var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/France.json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ";
+
+			$.getJSON(url, function(data) {
+			    console.log(data);
+			});
+
+			console.log(url);
+
+		</script>
+
+	</body>
+
+	<script>
+
+
+	</script>
+
+</html>
