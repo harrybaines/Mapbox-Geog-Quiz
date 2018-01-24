@@ -97,7 +97,7 @@
             el.style.height = 30 + 'px';
 
             var inputBox = document.getElementById("country-input");
-            var countries = ["Bulgaria", "France", "United Kingdom", "Spain", "Germany"];     
+            var countries = ["Bulgaria", "France", "United Kingdom", "Spain", "Germany", "Uruguay"];     
             var randCountry;       
             var correct = skipped = prevInd = 0;
 
@@ -105,6 +105,28 @@
                 container: 'map',
                 style: 'mapbox://styles/harryb0905/cjcs2esfh6ola2rnpaavxp4ld',
                 zoom: 3
+            });
+
+
+
+
+            map.on('load', function() {
+
+                map.addSource('counties', {
+                "type": "vector",
+                "url": "mapbox://mapbox.82pkq93d"
+            });
+                
+                map.addLayer({
+                    "id": "counties",
+                    "type": "fill",
+                    "source": "counties",
+                    "source-layer": "original",
+                    "paint": {
+                        "fill-outline-color": "rgba(0,0,0,0.1)",
+                        "fill-color": "rgba(0,0,0,0.1)"
+                    }
+                }, 'place-city-sm'); // Place polygon under these labels.
             });
 
             function startGame() {
@@ -152,7 +174,10 @@
                     map.flyTo({
                         center: coords
                     });
+                    // var bbox = data.features[0].bbox;
+                    // map.fitBounds(bbox);
                     new mapboxgl.Marker(el).setLngLat(coords).addTo(map);
+                    console.log(data);
                 });
             }
 
@@ -162,7 +187,7 @@
             }
 
             $(document).keypress(function(e){
-                if (e.which == 13){
+                if (e.which == 13) {
                     $("#confirm-btn").click();
                 }
             });
