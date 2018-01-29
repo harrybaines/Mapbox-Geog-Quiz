@@ -97,6 +97,7 @@
             el.style.height = 30 + 'px';
 
             var inputBox = document.getElementById("country-input");
+            // Add in countries from the geojson file instead of string
             var countryString = "Afghanistan,Albania,Algeria,America,Andorra,Angola,Antigua,Argentina,Armenia,Australia,Austria,Azerbaijan,Bahamas,Bahrain,Bangladesh,Barbados,Belarus,Belgium,Belize,Benin,Bhutan,Bissau,Bolivia,Bosnia,Botswana,Brazil,British,Brunei,Bulgaria,Burkina,Burma,Burundi,Cambodia,Cameroon,Canada,Cape Verde,Central African Republic,Chad,Chile,China,Colombia,Comoros,Congo,Costa Rica,country debt,Croatia,Cuba,Cyprus,Czech,Denmark,Djibouti,Dominica,East Timor,Ecuador,Egypt,El Salvador,Emirate,England,Eritrea,Estonia,Ethiopia,Fiji,Finland,France,Gabon,Gambia,Georgia,Germany,Ghana,Great Britain,Greece,Grenada,Grenadines,Guatemala,Guinea,Guyana,Haiti,Herzegovina,Honduras,Hungary,Iceland,in usa,India,Indonesia,Iran,Iraq,Ireland,Israel,Italy,Ivory Coast,Jamaica,Japan,Jordan,Kazakhstan,Kenya,Kiribati,Korea,Kosovo,Kuwait,Kyrgyzstan,Laos,Latvia,Lebanon,Lesotho,Liberia,Libya,Liechtenstein,Lithuania,Luxembourg,Macedonia,Madagascar,Malawi,Malaysia,Maldives,Mali,Malta,Marshall,Mauritania,Mauritius,Mexico,Micronesia,Moldova,Monaco,Mongolia,Montenegro,Morocco,Mozambique,Myanmar,Namibia,Nauru,Nepal,Netherlands,New Zealand,Nicaragua,Niger,Nigeria,Norway,Oman,Pakistan,Palau,Panama,Papua,Paraguay,Peru,Philippines,Poland,Portugal,Qatar,Romania,Russia,Rwanda,Samoa,San Marino,Sao Tome,Saudi Arabia,scotland,scottish,Senegal,Serbia,Seychelles,Sierra Leone,Singapore,Slovakia,Slovenia,Solomon,Somalia,South Africa,South Sudan,Spain,Sri Lanka,St. Kitts,St. Lucia,St Kitts,St Lucia,Saint Kitts,Santa Lucia,Sudan,Suriname,Swaziland,Sweden,Switzerland,Syria,Taiwan,Tajikistan,Tanzania,Thailand,Tobago,Togo,Tonga,Trinidad,Tunisia,Turkey,Turkmenistan,Tuvalu,Uganda,Ukraine,United Kingdom,United States,Uruguay,USA,Uzbekistan,Vanuatu,Vatican,Venezuela,Vietnam,wales,welsh,Yemen,Zambia,Zimbabwe";
             var countries = countryString.split(',');     
             var randCountry;       
@@ -108,26 +109,69 @@
                 zoom: 3
             });
 
+            var id = 0;
+
 
 
 
             map.on('load', function() {
 
-                map.addSource('counties', {
-                "type": "vector",
-                "url": "mapbox://mapbox.82pkq93d"
-            });
-                
-                map.addLayer({
-                    "id": "counties",
-                    "type": "fill",
-                    "source": "counties",
-                    "source-layer": "original",
-                    "paint": {
-                        "fill-outline-color": "rgba(0,0,0,0.1)",
-                        "fill-color": "rgba(0,0,0,0.1)"
-                    }
-                }, 'place-city-sm'); // Place polygon under these labels.
+                map.addSource("countries", {
+                    "type": "geojson",
+                    "data": "countries/countries.geo.json"
+                });
+
+                $.getJSON("countries/countries.geo.json", function(data) {
+
+                    console.log(data);
+                });
+
+
+                <!--map.addLayer({-->
+                    <!--"id": "state-fills",-->
+                    <!--"type": "fill",-->
+                    <!--"source": "countries",-->
+                    <!--"layout": {},-->
+                    <!--"paint": {-->
+                        <!--"fill-color": "#627BC1",-->
+                        <!--"fill-opacity": 0.5-->
+                    <!--}-->
+                <!--});-->
+
+                <!--map.addLayer({-->
+                    <!--"id": "state-borders",-->
+                    <!--"type": "line",-->
+                    <!--"source": "countries",-->
+                    <!--"layout": {},-->
+                    <!--"paint": {-->
+                        <!--"line-color": "#627BC1",-->
+                        <!--"line-width": 2-->
+                    <!--}-->
+                <!--});-->
+
+                <!--map.addLayer({-->
+                    <!--"id": "state-fills-hover",-->
+                    <!--"type": "fill",-->
+                    <!--"source": "countries",-->
+                    <!--"layout": {},-->
+                    <!--"paint": {-->
+                        <!--"fill-color": "#627BC1",-->
+                        <!--"fill-opacity": 1-->
+                    <!--},-->
+                    <!--"filter": ["==", "name", ""]-->
+                <!--});-->
+
+                <!--// When the user moves their mouse over the states-fill layer, we'll update the filter in-->
+                <!--// the state-fills-hover layer to only show the matching state, thus making a hover effect.-->
+                <!--map.on("mousemove", "state-fills", function(e) {-->
+                    <!--map.setFilter("state-fills-hover", ["==", "name", e.features[0].properties.name]);-->
+                <!--});-->
+
+                <!--// Reset the state-fills-hover layer's filter when the mouse leaves the layer.-->
+                <!--map.on("mouseleave", "state-fills", function() {-->
+                    <!--map.setFilter("state-fills-hover", ["==", "name", ""]);-->
+                <!--});-->
+
             });
 
             function startGame() {
@@ -167,6 +211,8 @@
                 getRandCountry();
             }
 
+
+
             function flyToCountry(country) {
 
                 var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + country + ".json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ&country=&types=country";
@@ -175,10 +221,41 @@
                     map.flyTo({
                         center: coords
                     });
-                    // var bbox = data.features[0].bbox;
-                    // map.fitBounds(bbox);
-                    new mapboxgl.Marker(el).setLngLat(coords).addTo(map);
-                    console.log(data);
+                    <!--new mapboxgl.Marker(el).setLngLat(coords).addTo(map);-->
+
+                    var results = []
+                    $.getJSON("countries/countries.geo.json", function(data) {
+                        for (var i=0 ; i < data.features.length ; i++)
+                        {
+
+                            if (data.features[i].properties.name == country) {
+                                results.push(data.features[i].geometry.coordinates[0]);
+                            }
+                        }
+                        id += 1;
+                        map.addLayer({
+                            'id': id.toString(),
+                            'type': 'fill',
+                            'source': {
+                                'type': 'geojson',
+                                'data': {
+                                    'type': 'Feature',
+                                    'geometry': {
+                                        'type': 'Polygon', // Add support for multi-polygons
+                                        'coordinates': results
+                                    }
+                                }
+                            },
+                            'layout': {},
+                            'paint': {
+                                'fill-color': '#088',
+                                'fill-opacity': 0.8
+                            }
+                        });
+                    });
+
+
+
                 });
             }
 
