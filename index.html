@@ -110,7 +110,6 @@
             $.getJSON("countries/countries.geo.json", function(data) {
 
                 JSONcountriesObj = data;
-
                 for (var key in data.features) {
                     countriesArray.push(data.features[key].properties.name);
                 }
