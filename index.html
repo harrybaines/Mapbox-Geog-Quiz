@@ -7,6 +7,9 @@
         <script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
         <script src="jquery.csv.min.js"></script>
 
+        <link rel="shortcut icon" type="image/png" href="/marker.png"/>
+        <link rel="shortcut icon" type="image/png" href="/marker.png"/>
+
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
         <style type="text/css">
@@ -73,7 +76,7 @@
         <h1> Geography Quiz </h1>
 
 
-          
+
         <div id='map' style='width: 1100px; height: 450px;'></div>
 
         <div id="input-container">
@@ -100,7 +103,7 @@
             // Add in countries from the geojson file instead of string
             var countriesArray = [];
             var JSONcountriesObj;
-            var randCountry;       
+            var randCountry;
             var correct = skipped = prevInd = 0;
 
 
@@ -123,9 +126,6 @@
             });
 
             var id = 0;
-
-
-
 
             map.on('load', function() {
 
@@ -230,6 +230,7 @@
 
                 var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + country + ".json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ&country=&types=country";
                 $.getJSON(url, function(data) {
+                    console.log("Trying to find: " + country)
                     var coords = data.features[0].geometry.coordinates;
                     map.flyTo({
                         center: coords
@@ -237,9 +238,11 @@
                     <!--new mapboxgl.Marker(el).setLngLat(coords).addTo(map);-->
 
                     var results = []
+                    var polygonType;
 
                     for (var i=0 ; i < JSONcountriesObj.features.length ; i++) {
                         if (JSONcountriesObj.features[i].properties.name == country) {
+                            polygonType = JSONcountriesObj.features[i].geometry.type;
                             results.push(JSONcountriesObj.features[i].geometry.coordinates[0]);
                         }
                     }
@@ -252,7 +255,7 @@
                             'data': {
                                 'type': 'Feature',
                                 'geometry': {
-                                    'type': 'Polygon', // Add support for multi-polygons
+                                    'type': polygonType, // Add support for multi-polygons
                                     'coordinates': results
                                 }
                             }
@@ -263,9 +266,6 @@
                             'fill-opacity': 0.8
                         }
                     });
-
-
-
                 });
             }
 
