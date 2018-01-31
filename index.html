@@ -246,25 +246,29 @@
                         }
                     }
                     id += 1;
-                    map.addLayer({
-                        'id': id.toString(),
-                        'type': 'fill',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'geometry': {
-                                    'type': polygonType, // Add support for multi-polygons
-                                    'coordinates': results
-                                }
-                            }
-                        },
-                        'layout': {},
-                        'paint': {
-                            'fill-color': '#088',
-                            'fill-opacity': 0.8
-                        }
-                    });
+
+                    if (id != 1) {
+                      map.removeLayer((id-1).toString());
+                    }
+                      map.addLayer({
+                          'id': id.toString(),
+                          'type': 'fill',
+                          'source': {
+                              'type': 'geojson',
+                              'data': {
+                                  'type': 'Feature',
+                                  'geometry': {
+                                      'type': polygonType, // Add support for multi-polygons
+                                      'coordinates': results
+                                  }
+                              }
+                          },
+                          'layout': {},
+                          'paint': {
+                              'fill-color': '#088',
+                              'fill-opacity': 0.8
+                          }
+                      });
                 });
             }
 
