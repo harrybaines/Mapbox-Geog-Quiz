@@ -10,6 +10,8 @@
         <link rel="shortcut icon" type="image/png" href="/marker.png"/>
         <link rel="shortcut icon" type="image/png" href="/marker.png"/>
 
+        <script src="js/notify.js"></script>
+
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
         <style type="text/css">
@@ -194,12 +196,19 @@
 
             function getRandCountry() {
                 var ind = prevInd;
-                while (ind == prevInd) {
-                    ind = Math.floor(Math.random() * countriesArray.length);
+                var length = countriesArray.length;
+                if (length == 0) {
+                  console.log("No more countries left!");
                 }
-                randCountry = countriesArray[ind];
-                flyToCountry(randCountry);
-                prevInd = ind;
+                else {
+                  while (ind == prevInd) {
+                      ind = Math.floor(Math.random() * length);
+                  }
+                  randCountry = countriesArray[ind];
+                  flyToCountry(randCountry);
+                  prevInd = ind;
+                  countriesArray.splice(ind, 1);
+                }
             }
 
             function checkAnswer() {
@@ -207,11 +216,23 @@
 
                 if (entry == randCountry.toLowerCase()) {
                     correct++;
-                    console.log("Correct!" + " (" + correct + ") correct");
+                    $("#country-input").notify(
+                      "Correct!", {
+                        position: 'top',
+                        style: 'notifystyle',
+                        className: 'customgreen'
+                      }
+                    );
                     map.setPaintProperty(id.toString(), 'fill-color', "#009933");
                 }
                 else {
-                    console.log("Incorrect, the answer was: " + randCountry);
+                    $("#country-input").notify(
+                      "Incorrect, the answer was: " + randCountry, {
+                        position: 'top',
+                        style: 'notifystyle',
+                        className: 'customred'
+                      }
+                    );
                     map.setPaintProperty(id.toString(), 'fill-color', "#ff4d4d");
                 }
 
@@ -292,6 +313,23 @@
 
     <script>
 
+      $.notify.addStyle('notifystyle', {
+        html: "<div><span data-notify-text/></div>",
+        classes: {
+          base: {
+            "white-space": "nowrap",
+            "padding": "5px",
+            "font-family": "Verdana",
+            "color": "white"
+          },
+          customgreen: {
+            "background-color": "#009933"
+          },
+          customred: {
+            "background-color": "#ff4d4d"
+          }
+        }
+      });
 
     </script>
 

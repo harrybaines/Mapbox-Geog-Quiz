@@ -9,3 +9,4 @@ Countries with problems:
 - United States of America - doesn't appear/tiny shape possible but didn't see
 - United Kingdom - wrong polygon in wrong place
 - Russia - polygon doesn't appear, maybe tiny polygon somewhere but didn't see
+- Australia - tiny polygon not in correct place
