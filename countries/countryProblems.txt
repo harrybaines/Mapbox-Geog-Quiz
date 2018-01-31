@@ -1,0 +1,11 @@
+Countries with problems:
+
+- Puerto Rico - crash
+- China (doesn't appear)
+- Western Sahara (weird shape)
+- French Guiana - crash
+- France (wrong shape in wrong place)
+- Antarctica - tiny polygon 
+- United States of America - doesn't appear/tiny shape possible but didn't see
+- United Kingdom - wrong polygon in wrong place
+- Russia - polygon doesn't appear, maybe tiny polygon somewhere but didn't see

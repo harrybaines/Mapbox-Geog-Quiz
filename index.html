@@ -206,11 +206,13 @@
                 var entry = inputBox.value.toLowerCase();
 
                 if (entry == randCountry.toLowerCase()) {
-                    console.log("Correct!" + " (" + correct + ") correct");
                     correct++;
+                    console.log("Correct!" + " (" + correct + ") correct");
+                    map.setPaintProperty(id.toString(), 'fill-color', "#009933");
                 }
                 else {
                     console.log("Incorrect, the answer was: " + randCountry);
+                    map.setPaintProperty(id.toString(), 'fill-color', "#ff4d4d");
                 }
 
                 inputBox.value = "";
@@ -246,6 +248,11 @@
                         }
                     }
                     id += 1;
+
+                    if (id != 1) {
+                      // map.removeLayer((id-1).toString());
+
+                    }
                     map.addLayer({
                         'id': id.toString(),
                         'type': 'fill',
