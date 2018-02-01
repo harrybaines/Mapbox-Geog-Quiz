@@ -129,6 +129,71 @@
             var randCountry;
             var correct = skipped = prevInd = 0;
 
+            var opts = [];
+
+            var divOpts = [];
+
+            for (var i = 0; i < numOptions; i++) {
+              var div = document.createElement("div");
+              div.className = "optionButton";
+              optContainer.appendChild(div);
+              divOpts.push(div);
+            }
+            $('div.optionButton').click(function() {
+              console.log("You have chosen: " + $(this).text());
+              if (checkAnswer() == true) {
+                $(this).notify(
+                  "Correct!", {
+                    position: 'top',
+                    style: 'notifystyle',
+                    className: 'customgreen'
+                  }
+                );
+              }
+              else {
+                $(this).notify(
+                  "Incorrect, the answer was: " + randCountry, {
+                    position: 'top',
+                    style: 'notifystyle',
+                    className: 'customred'
+                  }
+                );
+              }
+              generateOpts();
+
+            });
+
+            function generateOpts() {
+              opts = []
+              var randCountry = getRandCountry(true, true);
+              opts.push(randCountry);
+              for (var i = 0; i < numOptions-1; i++) {
+                opts.push(getRandCountry(false, false));
+              }
+
+              opts = shuffleArray(opts);
+              for (var i = 0; i < numOptions; i++) {
+                divOpts[i].innerHTML = opts[i];
+              }
+              console.log("Opts = " + opts)
+
+              return opts;
+            }
+
+            /**
+             * Randomize array element order in-place.
+             * Using Durstenfeld shuffle algorithm.
+             */
+            function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+                return array;
+            }
+
 
             $.getJSON("countries/countries.geo.json", function(data) {
 
@@ -212,7 +277,7 @@
             function startGame() {
                  correct, skipped = 0;
                  inputBox.focus();
-                 getRandCountry(true, true);
+                 generateOpts();
             }
 
             function getRandCountry(fly, shouldRemove) {
@@ -239,32 +304,20 @@
 
             function checkAnswer() {
                 var entry = inputBox.value.toLowerCase();
-
+                var wasCorrect = false;
                 if (entry == randCountry.toLowerCase()) {
                     correct++;
-                    $("#country-input").notify(
-                      "Correct!", {
-                        position: 'top',
-                        style: 'notifystyle',
-                        className: 'customgreen'
-                      }
-                    );
+                    wasCorrect = true;
                     map.setPaintProperty(id.toString(), 'fill-color', "#009933");
                 }
                 else {
-                    $("#country-input").notify(
-                      "Incorrect, the answer was: " + randCountry, {
-                        position: 'top',
-                        style: 'notifystyle',
-                        className: 'customred'
-                      }
-                    );
+
                     map.setPaintProperty(id.toString(), 'fill-color', "#ff4d4d");
                 }
 
                 inputBox.value = "";
                 inputBox.focus();
-                getRandCountry(true, true);
+                return wasCorrect;
             }
 
             function skipCountry() {
@@ -321,19 +374,8 @@
                     });
                 });
 
-                var opts = [];
+                return randCountry;
 
-                for (var i = 0; i < numOptions; i++) {
-                  var div = document.createElement("div");
-                  var randOpt = getRandCountry(false, false);
-                  div.className = "optionButton";
-                  div.innerHTML = randOpt;
-                  console.log(randOpt);
-                  optContainer.appendChild(div);
-                }
-                $('div.optionButton').click(function() {
-                  console.log("You have chosen: " + $(this).text());
-                });
             }
 
             function finishGame() {
