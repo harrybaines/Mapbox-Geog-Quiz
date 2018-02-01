@@ -1,418 +1,43 @@
 <!DOCTYPE html>
-
     <head>
-        <title>Geo Quiz</title>
-        <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+        <title>Classrooms</title>
+
+        <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
-        <script src="jquery.csv.min.js"></script>
+        <script src="js/jquery.csv.min.js"></script>
 
-        <link rel="shortcut icon" type="image/png" href="/marker.png"/>
-        <link rel="shortcut icon" type="image/png" href="/marker.png"/>
-
+        <!-- Bootstrap CDN -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
+        <!-- Custom CSS -->
+        <link href='css/styles.css' rel='stylesheet' />
+
+        <!-- Main js -->
+        <script type="text/javascript" src="js/main.js"></script>
+
+        <!-- Notification js -->
         <script src="js/notify.js"></script>
 
+        <!-- Mapbox Links -->
+        <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
-        <style type="text/css">
-            h1 {
-                font-size: 200%;
-                text-align: center;
-                color: green;
-                font-family: "Verdana";
-                margin-bottom: 30px;
-            }
-            #map-container {
-                text-align:center;
-                margin: 0 auto;
-                padding: 50px;
-                background-color: white;
-                width: 900px;
-                height: 350px;
-                box-shadow: 0 0 25px rgba(0,0,0,0.6);
-            }
-            #map {
-                margin: 0 auto;
-            }
-            #input-container {
-                text-align: center;
-                padding: 25px;
-                box-shadow: 0 0 25px rgba(0,0,0,0.6);
-                height: 175px;
-                width: 700px;
-                margin: 40px auto;
-            }
-            #optionContainer {
-              text-align: center;
-            }
-            .optionButton {
-              background-color: #b3d9ff;
-              color: black;
-              display: inline-block;
-              padding: 30px 75px;
-              margin: 20px;
-              align: center;
-              overflow: hidden;
-              word-wrap:break-word;
-            }
-            #control-container {
-                margin-top: 25px;
-            }
-            .control-btn {
-                background-color: #4CAF50;
-                border: none;
-                color: white;
-                padding: 25px 32px;
-                text-align: center;
-                text-decoration: none;
-                font-size: 16px;
-                cursor: pointer;
-            }
-            #question-text {
-                font-size: 125%;
-                font-family: "Verdana";
-                margin: -10px 0 25px 0;
-            }
-            img {
-                border: 1px solid black;
-            }
-            #country-input {
-                width:500px;
-                height: 40px;
-                text-align: center;
-                font-size: 200%;
-            }
-        </style>
-
+        <!-- Images -->
+        <link rel="shortcut icon" type="image/png" href="images/marker.png"/>
     </head>
 
     <body>
-
         <h1> Geography Quiz </h1>
-
-
-
         <div id='map' style='width: 1100px; height: 450px;'></div>
         <div id="optionContainer"></div>
         <div id="input-container">
-            <input id="country-input" type="text" name="country">
             <div id="control-container">
-                <input class="control-btn" id="start-btn" type="button" value="Start!" onclick="this.style.visibility='hidden';startGame();">
-                <input class="control-btn" id="confirm-btn" type="button" value="Confirm" onclick="checkAnswer();">
-                <input class="control-btn" id="skip-btn" type="button" value="Skip" onclick="skipCountry();">
+                <input class="control-btn" id="start-btn" type="button" value="Start!" onclick="startGame();">
                 <input class="control-btn" id="finish-btn" type="button" value="Finish" onclick="finishGame();">
             </div>
-
         </div>
-
-
-        <script>
-
-            mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
-            var el = document.createElement('div');
-            el.className = 'marker';
-            el.style.backgroundImage = 'url(marker.png)';
-            el.style.width = 30 + 'px';
-            el.style.height = 30 + 'px';
-
-            var numOptions = 4;
-            var optContainer = document.getElementById("optionContainer");
-
-            var inputBox = document.getElementById("country-input");
-            // Add in countries from the geojson file instead of string
-            var countriesArray = [];
-            var JSONcountriesObj;
-            var randCountry;
-            var answer;
-            var correct = skipped = prevInd = 0;
-
-            var opts = [];
-
-            var divOpts = [];
-
-            for (var i = 0; i < numOptions; i++) {
-              var div = document.createElement("div");
-              div.className = "optionButton";
-              optContainer.appendChild(div);
-              divOpts.push(div);
-            }
-            $('div.optionButton').click(function() {
-              var chosen = $(this).text();
-              if (checkAnswer(chosen) == true) {
-                $('#input-container').notify(
-                  "Correct!", {
-                    position: 'top',
-                    style: 'notifystyle',
-                    className: 'customgreen'
-                  }
-                );
-              }
-              else {
-                $('#input-container').notify(
-                  "Incorrect, the answer was: " + answer, {
-                    position: 'top',
-                    style: 'notifystyle',
-                    className: 'customred'
-                  }
-                );
-              }
-              generateOpts();
-            });
-
-            // test
-            function generateOpts() {
-              opts = []
-              answer = getRandCountry(true, true);
-              opts.push(randCountry);
-              for (var i = 0; i < numOptions-1; i++) {
-                opts.push(getRandCountry(false, false));
-              }
-
-              opts = shuffleArray(opts);
-              for (var i = 0; i < numOptions; i++) {
-                divOpts[i].innerHTML = opts[i];
-              }
-
-              return opts;
-            }
-
-            /**
-             * Randomize array element order in-place.
-             * Using Durstenfeld shuffle algorithm.
-             */
-            function shuffleArray(array) {
-                for (var i = array.length - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                }
-                return array;
-            }
-
-
-            $.getJSON("countries/countries.geo.json", function(data) {
-
-                JSONcountriesObj = data;
-                for (var key in data.features) {
-                    countriesArray.push(data.features[key].properties.name);
-                }
-
-            });
-
-            console.log(countriesArray);
-
-            var map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/harryb0905/cjcs2esfh6ola2rnpaavxp4ld',
-                zoom: 3
-            });
-
-            var id = 0;
-
-            map.on('load', function() {
-
-                map.addSource("countries", {
-                    "type": "geojson",
-                    "data": "countries/countries.geo.json"
-                });
-
-                $.getJSON("countries/countries.geo.json", function(data) {
-
-                    console.log(data);
-                });
-
-
-                <!--map.addLayer({-->
-                    <!--"id": "state-fills",-->
-                    <!--"type": "fill",-->
-                    <!--"source": "countries",-->
-                    <!--"layout": {},-->
-                    <!--"paint": {-->
-                        <!--"fill-color": "#627BC1",-->
-                        <!--"fill-opacity": 0.5-->
-                    <!--}-->
-                <!--});-->
-
-                <!--map.addLayer({-->
-                    <!--"id": "state-borders",-->
-                    <!--"type": "line",-->
-                    <!--"source": "countries",-->
-                    <!--"layout": {},-->
-                    <!--"paint": {-->
-                        <!--"line-color": "#627BC1",-->
-                        <!--"line-width": 2-->
-                    <!--}-->
-                <!--});-->
-
-                <!--map.addLayer({-->
-                    <!--"id": "state-fills-hover",-->
-                    <!--"type": "fill",-->
-                    <!--"source": "countries",-->
-                    <!--"layout": {},-->
-                    <!--"paint": {-->
-                        <!--"fill-color": "#627BC1",-->
-                        <!--"fill-opacity": 1-->
-                    <!--},-->
-                    <!--"filter": ["==", "name", ""]-->
-                <!--});-->
-
-                <!--// When the user moves their mouse over the states-fill layer, we'll update the filter in-->
-                <!--// the state-fills-hover layer to only show the matching state, thus making a hover effect.-->
-                <!--map.on("mousemove", "state-fills", function(e) {-->
-                    <!--map.setFilter("state-fills-hover", ["==", "name", e.features[0].properties.name]);-->
-                <!--});-->
-
-                <!--// Reset the state-fills-hover layer's filter when the mouse leaves the layer.-->
-                <!--map.on("mouseleave", "state-fills", function() {-->
-                    <!--map.setFilter("state-fills-hover", ["==", "name", ""]);-->
-                <!--});-->
-
-            });
-
-            function startGame() {
-                 correct, skipped = 0;
-                 inputBox.focus();
-                 generateOpts();
-            }
-
-            function getRandCountry(fly, shouldRemove) {
-                var ind = prevInd;
-                var length = countriesArray.length;
-                if (length == 0) {
-                  console.log("No more countries left!");
-                }
-                else {
-                  while (ind == prevInd) {
-                      ind = Math.floor(Math.random() * length);
-                  }
-                  randCountry = countriesArray[ind];
-                  if (fly) {
-                    flyToCountry(randCountry);
-                  }
-                  prevInd = ind;
-                  if (shouldRemove) {
-                    countriesArray.splice(ind, 1);
-                  }
-                  return randCountry;
-                }
-            }
-
-            function checkAnswer(chosen) {
-                var wasCorrect = false;
-                if (chosen == answer) {
-                    correct++;
-                    wasCorrect = true;
-                    map.setPaintProperty(id.toString(), 'fill-color', "#009933");
-                }
-                else {
-                    map.setPaintProperty(id.toString(), 'fill-color', "#ff4d4d");
-                }
-
-                inputBox.value = "";
-                inputBox.focus();
-                return wasCorrect;
-            }
-
-            function skipCountry() {
-                skipped++;
-                getRandCountry(true, true);
-            }
-
-
-
-            function flyToCountry(country) {
-
-                var url = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + country + ".json?access_token=pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxNHB3aHgyenk4MzNybmVuZmxybWF4In0._nwmtVzlz0bozCPpvjelRQ&country=&types=country";
-                $.getJSON(url, function(data) {
-                    console.log("Trying to find: " + country)
-                    var coords = data.features[0].geometry.coordinates;
-                    map.flyTo({
-                        center: coords
-                    });
-                    <!--new mapboxgl.Marker(el).setLngLat(coords).addTo(map);-->
-
-                    var results = []
-                    var polygonType;
-
-                    for (var i=0 ; i < JSONcountriesObj.features.length ; i++) {
-                        if (JSONcountriesObj.features[i].properties.name == country) {
-                            polygonType = JSONcountriesObj.features[i].geometry.type;
-                            results.push(JSONcountriesObj.features[i].geometry.coordinates[0]);
-                        }
-                    }
-                    id += 1;
-
-                    if (id != 1) {
-                      // map.removeLayer((id-1).toString());
-
-                    }
-                    map.addLayer({
-                        'id': id.toString(),
-                        'type': 'fill',
-                        'source': {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'geometry': {
-                                    'type': polygonType, // Add support for multi-polygons
-                                    'coordinates': results
-                                }
-                            }
-                        },
-                        'layout': {},
-                        'paint': {
-                            'fill-color': '#E4CC37',
-                            'fill-opacity': 0.8
-                        }
-                    });
-                });
-
-                return country;
-
-            }
-
-            function finishGame() {
-                console.log("You got " + correct + " correct and skipped " + skipped + " times");
-                document.getElementById("start-btn").style.visibility = "visible";
-            }
-
-            $(document).keypress(function(e){
-                if (e.which == 13) {
-                    $("#confirm-btn").click();
-                }
-            });
-
-        </script>
-
     </body>
-
-    <script>
-
-      $.notify.addStyle('notifystyle', {
-        html: "<div><span data-notify-text/></div>",
-        classes: {
-          base: {
-            "white-space": "nowrap",
-            "padding": "5px",
-            "font-family": "Verdana",
-            "color": "white"
-          },
-          customgreen: {
-            "background-color": "#009933"
-          },
-          customred: {
-            "background-color": "#ff4d4d"
-          }
-        }
-      });
-
-
-
-    </script>
-
 </html>

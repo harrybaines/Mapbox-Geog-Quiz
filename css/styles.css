@@ -1,0 +1,61 @@
+h1 {
+    font-size: 200%;
+    text-align: center;
+    color: green;
+    font-family: "Verdana";
+    margin-bottom: 30px;
+}
+#map-container {
+    text-align:center;
+    margin: 0 auto;
+    padding: 50px;
+    background-color: white;
+    width: 900px;
+    height: 350px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+#map {
+    margin: 0 auto;
+}
+#input-container {
+    text-align: center;
+    padding: 25px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    height: 175px;
+    width: 700px;
+    margin: 40px auto;
+}
+#optionContainer {
+  text-align: center;
+}
+.optionButton {
+  background-color: #b3d9ff;
+  color: black;
+  display: inline-block;
+  padding: 30px 75px;
+  margin: 20px;
+  align: center;
+  overflow: hidden;
+  word-wrap:break-word;
+}
+#control-container {
+    margin-top: 25px;
+}
+.control-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 25px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+#question-text {
+    font-size: 125%;
+    font-family: "Verdana";
+    margin: -10px 0 25px 0;
+}
+img {
+    border: 1px solid black;
+}
