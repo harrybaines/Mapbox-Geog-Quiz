@@ -46,6 +46,19 @@
                 width: 700px;
                 margin: 40px auto;
             }
+            #optionContainer {
+              text-align: center;
+            }
+            .optionButton {
+              background-color: #b3d9ff;
+              color: black;
+              display: inline-block;
+              padding: 30px 75px;
+              margin: 20px;
+              align: center;
+              overflow: hidden;
+              word-wrap:break-word;
+            }
             #control-container {
                 margin-top: 25px;
             }
@@ -84,7 +97,7 @@
 
 
         <div id='map' style='width: 1100px; height: 450px;'></div>
-
+        <div id="optionContainer"></div>
         <div id="input-container">
             <input id="country-input" type="text" name="country">
             <div id="control-container">
@@ -93,17 +106,21 @@
                 <input class="control-btn" id="skip-btn" type="button" value="Skip" onclick="skipCountry();">
                 <input class="control-btn" id="finish-btn" type="button" value="Finish" onclick="finishGame();">
             </div>
+
         </div>
 
 
         <script>
 
             mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnliMDkwNSIsImEiOiJjamNxazhjbTUyZWVtMzNvOXlhY3BkaG55In0.ZR3_5V8eOEdyEL5tEJSucA';
-            var el = document.createElement('div'); // test again!
+            var el = document.createElement('div');
             el.className = 'marker';
             el.style.backgroundImage = 'url(marker.png)';
             el.style.width = 30 + 'px';
             el.style.height = 30 + 'px';
+
+            var numOptions = 4;
+            var optContainer = document.getElementById("optionContainer");
 
             var inputBox = document.getElementById("country-input");
             // Add in countries from the geojson file instead of string
@@ -195,10 +212,10 @@
             function startGame() {
                  correct, skipped = 0;
                  inputBox.focus();
-                 getRandCountry();
+                 getRandCountry(true, true);
             }
 
-            function getRandCountry() {
+            function getRandCountry(fly, shouldRemove) {
                 var ind = prevInd;
                 var length = countriesArray.length;
                 if (length == 0) {
@@ -209,9 +226,14 @@
                       ind = Math.floor(Math.random() * length);
                   }
                   randCountry = countriesArray[ind];
-                  flyToCountry(randCountry);
+                  if (fly) {
+                    flyToCountry(randCountry);
+                  }
                   prevInd = ind;
-                  countriesArray.splice(ind, 1);
+                  if (shouldRemove) {
+                    countriesArray.splice(ind, 1);
+                  }
+                  return randCountry;
                 }
             }
 
@@ -242,12 +264,12 @@
 
                 inputBox.value = "";
                 inputBox.focus();
-                getRandCountry();
+                getRandCountry(true, true);
             }
 
             function skipCountry() {
                 skipped++;
-                getRandCountry();
+                getRandCountry(true, true);
             }
 
 
@@ -293,10 +315,24 @@
                         },
                         'layout': {},
                         'paint': {
-                            'fill-color': '#088',
+                            'fill-color': '#E4CC37',
                             'fill-opacity': 0.8
                         }
                     });
+                });
+
+                var opts = [];
+
+                for (var i = 0; i < numOptions; i++) {
+                  var div = document.createElement("div");
+                  var randOpt = getRandCountry(false, false);
+                  div.className = "optionButton";
+                  div.innerHTML = randOpt;
+                  console.log(randOpt);
+                  optContainer.appendChild(div);
+                }
+                $('div.optionButton').click(function() {
+                  console.log("You have chosen: " + $(this).text());
                 });
             }
 
@@ -334,6 +370,8 @@
           }
         }
       });
+
+
 
     </script>
 
