@@ -127,6 +127,7 @@
             var countriesArray = [];
             var JSONcountriesObj;
             var randCountry;
+            var answer;
             var correct = skipped = prevInd = 0;
 
             var opts = [];
@@ -140,9 +141,9 @@
               divOpts.push(div);
             }
             $('div.optionButton').click(function() {
-              console.log("You have chosen: " + $(this).text());
-              if (checkAnswer() == true) {
-                $(this).notify(
+              var chosen = $(this).text();
+              if (checkAnswer(chosen) == true) {
+                $('#input-container').notify(
                   "Correct!", {
                     position: 'top',
                     style: 'notifystyle',
@@ -151,8 +152,8 @@
                 );
               }
               else {
-                $(this).notify(
-                  "Incorrect, the answer was: " + randCountry, {
+                $('#input-container').notify(
+                  "Incorrect, the answer was: " + answer, {
                     position: 'top',
                     style: 'notifystyle',
                     className: 'customred'
@@ -160,13 +161,12 @@
                 );
               }
               generateOpts();
-
             });
 
             // test
             function generateOpts() {
               opts = []
-              var randCountry = getRandCountry(true, true);
+              answer = getRandCountry(true, true);
               opts.push(randCountry);
               for (var i = 0; i < numOptions-1; i++) {
                 opts.push(getRandCountry(false, false));
@@ -176,7 +176,6 @@
               for (var i = 0; i < numOptions; i++) {
                 divOpts[i].innerHTML = opts[i];
               }
-              console.log("Opts = " + opts)
 
               return opts;
             }
@@ -303,16 +302,14 @@
                 }
             }
 
-            function checkAnswer() {
-                var entry = inputBox.value.toLowerCase();
+            function checkAnswer(chosen) {
                 var wasCorrect = false;
-                if (entry == randCountry.toLowerCase()) {
+                if (chosen == answer) {
                     correct++;
                     wasCorrect = true;
                     map.setPaintProperty(id.toString(), 'fill-color', "#009933");
                 }
                 else {
-
                     map.setPaintProperty(id.toString(), 'fill-color', "#ff4d4d");
                 }
 
@@ -375,7 +372,7 @@
                     });
                 });
 
-                return randCountry;
+                return country;
 
             }
 
