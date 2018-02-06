@@ -1,35 +1,44 @@
 <!DOCTYPE html>
     <head>
         <title>Classrooms</title>
-
         <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.3.0.min.js" integrity="sha256-RTQy8VOmNlT6b2PIRur37p6JEBZUE7o8wPgMvu18MC4=" crossorigin="anonymous"></script>
         <script src="js/jquery.csv.min.js"></script>
-
         <!-- Bootstrap CDN -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-
         <!-- Custom CSS -->
         <link href='css/styles.css' rel='stylesheet' />
-
         <!-- Main js -->
         <script type="text/javascript" src="js/main.js"></script>
-
         <!-- Notification js -->
         <script src="js/notify.js"></script>
-
         <!-- Mapbox Links -->
         <script src='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-
         <!-- Images -->
         <link rel="shortcut icon" type="image/png" href="images/marker.png"/>
     </head>
 
     <body>
+        <!-- Navbar -->
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#geography">Geography</a></li>
+          <li><a href="#maths">Maths</a></li>
+          <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Science</a>
+            <div class="dropdown-content">
+              <a href="#">Biology</a>
+              <a href="#">Chemistry</a>
+              <a href="#">Physics</a>
+            </div>
+          </li>
+          <li><a href="#about_us">About Us</a></li>
+        </ul>
+        <!-- Main Section -->
         <h1> Geography Quiz </h1>
         <div id='map' style='width: 1100px; height: 450px;'></div>
         <div id="optionContainer"></div>
